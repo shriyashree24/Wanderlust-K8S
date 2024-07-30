@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+    
+    environment {
+        SONAR_HOME = tool name: 'Sonar', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+    }
+    
+    stages {
+        stage("Clone Code from GitHub") {
+            steps {
+                git url: "https://github.com/shriyashree24/Wanderlust-K8S.git", branch: "DevOpss"
+            }
+        }
+        
+        stage('Install Dependencies') {
+            steps {
+                // Install frontend dependencies
+                dir('frontend') {
+                    sh 'npm install'
+                }
+                
+                // Install backend dependencies
+                dir('backend') {
+                    sh 'npm install'
+                }
+            }
+        }
+        
+        stage("SonarQube Quality Analysis") {
+            steps {
+                withSonarQubeEnv('Sonar') {
+                    sh "$SONAR_HOME/bin/sonar-scanner -Dsonar.projectName=wanderlust -Dsonar.projectKey=wanderlust"
+                }
+            }
+        }
+        
+        stage("OWASP Dependency Check") {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'owasp'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+    }
+}
+        
