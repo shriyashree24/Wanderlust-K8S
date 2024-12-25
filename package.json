@@ -1,6 +1,7 @@
 {
 	"dependencies": {
-		"concurrently": "^8.2.2"
+		"concurrently": "^8.2.2",
+		"newrelic": "latest"
 	},
 	"scripts": {
 		"start-frontend": "cd frontend && npm run dev",
