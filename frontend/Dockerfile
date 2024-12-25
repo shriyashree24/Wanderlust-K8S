@@ -7,6 +7,8 @@ COPY package*.json ./
 
 RUN npm install newrelic --save
 
+ENV NEW_RELIC_NO_CONFIG_FILE=true
+
 
 COPY . .
 
